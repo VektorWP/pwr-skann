@@ -13,52 +13,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0D0D0F;
-    --surface: #17181C;
-    --surface-2: #1F2126;
-    --line: #2A2D33;
-    --orange: #FF6A00;
-    --orange-press: #E55E00;
-    --text: #F5F5F2;
-    --muted: #8A8D93;
-    --ok: #3DDC84;
+    --bg: #0D0D0F; --surface: #17181C; --surface-2: #1F2126; --line: #2A2D33;
+    --orange: #FF6A00; --orange-press: #E55E00;
+    --text: #F5F5F2; --muted: #8A8D93; --ok: #3DDC84; --warn: #FFB020;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; }
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg); color: var(--text);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    font-size: 16px;
-    line-height: 1.45;
-    padding-bottom: env(safe-area-inset-bottom);
+    font-size: 16px; line-height: 1.45; padding-bottom: env(safe-area-inset-bottom);
   }
   .wrap { max-width: 520px; margin: 0 auto; padding: 0 14px 32px; }
 
-  /* Header */
-  header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 2px 10px;
-  }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 14px 2px 10px; }
   .wordmark {
-    font-family: "Archivo", system-ui, sans-serif;
-    font-weight: 900;
-    font-stretch: 78%;
-    font-size: 26px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    line-height: 1;
+    font-family: "Archivo", system-ui, sans-serif; font-weight: 900; font-stretch: 78%;
+    font-size: 26px; letter-spacing: 0.5px; text-transform: uppercase; line-height: 1;
   }
   .wordmark .pwr { color: var(--orange); }
-  .wordmark .sub {
-    display: block;
-    font-weight: 600;
-    font-stretch: 90%;
-    font-size: 10px;
-    letter-spacing: 3.5px;
-    color: var(--muted);
-    margin-top: 4px;
-  }
+  .wordmark .sub { display: block; font-weight: 600; font-stretch: 90%; font-size: 10px; letter-spacing: 3.5px; color: var(--muted); margin-top: 4px; }
   .iconbtn {
     background: var(--surface); border: 1px solid var(--line); color: var(--text);
     width: 42px; height: 42px; border-radius: 12px; font-size: 19px;
@@ -66,20 +40,10 @@
   }
   .iconbtn:active { background: var(--surface-2); }
 
-  /* Viewfinder */
-  .scanner {
-    position: relative;
-    border-radius: 18px;
-    overflow: hidden;
-    background: #000;
-    aspect-ratio: 4 / 3;
-    border: 1px solid var(--line);
-  }
+  .scanner { position: relative; border-radius: 18px; overflow: hidden; background: #000; aspect-ratio: 5 / 3; border: 1px solid var(--line); }
   .scanner video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .scanner .overlay { position: absolute; inset: 0; pointer-events: none; }
-  .frame {
-    position: absolute; left: 12%; right: 12%; top: 26%; bottom: 26%;
-  }
+  .frame { position: absolute; left: 12%; right: 12%; top: 24%; bottom: 24%; }
   .corner { position: absolute; width: 26px; height: 26px; border: 3px solid var(--orange); }
   .corner.tl { top: 0; left: 0; border-right: 0; border-bottom: 0; border-top-left-radius: 8px; }
   .corner.tr { top: 0; right: 0; border-left: 0; border-bottom: 0; border-top-right-radius: 8px; }
@@ -88,19 +52,13 @@
   .laser {
     position: absolute; left: 6%; right: 6%; height: 2px;
     background: linear-gradient(90deg, transparent, var(--orange) 20%, var(--orange) 80%, transparent);
-    box-shadow: 0 0 10px 1px rgba(255,106,0,0.7);
-    top: 10%;
+    box-shadow: 0 0 10px 1px rgba(255,106,0,0.7); top: 10%;
     animation: sweep 2.1s ease-in-out infinite alternate;
   }
   @keyframes sweep { from { top: 8%; } to { top: 90%; } }
   @media (prefers-reduced-motion: reduce) { .laser { animation: none; top: 50%; } }
   .scanner.hit .corner { border-color: var(--ok); }
-  .scanner.hit .laser { display: none; }
-
-  .scanner .idle {
-    position: absolute; inset: 0; display: grid; place-items: center;
-    background: radial-gradient(ellipse at center, #17181C 0%, #0D0D0F 100%);
-  }
+  .scanner .idle { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(ellipse at center, #17181C 0%, #0D0D0F 100%); }
   .bigstart {
     background: var(--orange); color: #14100C; border: 0;
     font-family: "Archivo", system-ui, sans-serif; font-weight: 800; font-stretch: 85%;
@@ -108,73 +66,68 @@
     padding: 16px 26px; border-radius: 14px; cursor: pointer;
   }
   .bigstart:active { background: var(--orange-press); }
-
-  .cam-controls {
-    position: absolute; right: 10px; bottom: 10px; display: flex; gap: 8px;
-  }
+  .cam-controls { position: absolute; right: 10px; bottom: 10px; display: flex; gap: 8px; }
   .cam-controls button {
     background: rgba(13,13,15,0.65); backdrop-filter: blur(4px);
     border: 1px solid rgba(255,255,255,0.15); color: var(--text);
     width: 42px; height: 42px; border-radius: 50%; font-size: 18px; cursor: pointer;
   }
-  .status {
-    font-size: 13px; color: var(--muted); text-align: center; margin-top: 8px; min-height: 18px;
-  }
+  .status { font-size: 13px; color: var(--muted); text-align: center; margin-top: 8px; min-height: 18px; }
 
-  /* Result card */
-  .result {
-    margin-top: 12px; background: var(--surface); border: 1px solid var(--line);
-    border-radius: 16px; padding: 14px; display: none;
-  }
-  .result.show { display: block; }
-  .result .ean {
-    font-family: "Archivo", monospace; font-weight: 700; font-size: 24px;
-    letter-spacing: 2.5px; word-break: break-all;
-  }
-  .result .kind { font-size: 12px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 2px; }
-  .openbtn {
-    display: block; width: 100%; margin-top: 12px;
-    background: var(--orange); color: #14100C; border: 0; border-radius: 12px;
-    font-family: "Archivo", system-ui, sans-serif; font-weight: 800; font-size: 16px;
-    text-transform: uppercase; letter-spacing: 0.8px;
-    padding: 14px; cursor: pointer; text-align: center; text-decoration: none;
-  }
-  .openbtn:active { background: var(--orange-press); }
-  .copybtn {
-    margin-top: 8px; width: 100%; background: transparent; color: var(--muted);
-    border: 1px solid var(--line); border-radius: 12px; padding: 10px; font-size: 14px; cursor: pointer;
-  }
-
-  /* Manual search */
-  .search-row { display: flex; gap: 8px; margin-top: 18px; }
+  .search-row { display: flex; gap: 8px; margin-top: 12px; }
   .search-row input {
     flex: 1; background: var(--surface); border: 1px solid var(--line); color: var(--text);
     border-radius: 12px; padding: 13px 14px; font-size: 16px; min-width: 0;
   }
   .search-row input:focus { outline: 2px solid var(--orange); border-color: transparent; }
-  .search-row button {
-    background: var(--orange); border: 0; color: #14100C; border-radius: 12px;
-    padding: 0 18px; font-size: 18px; cursor: pointer;
+  .search-row button { background: var(--orange); border: 0; color: #14100C; border-radius: 12px; padding: 0 18px; font-size: 18px; cursor: pointer; }
+
+  /* Filter chips */
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 14px 0 4px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0; background: var(--surface); border: 1px solid var(--line); color: var(--text);
+    border-radius: 999px; padding: 9px 15px; font-size: 14px; cursor: pointer; white-space: nowrap;
+  }
+  .chip.active { background: var(--orange); border-color: var(--orange); color: #14100C; font-weight: 700; }
+
+  /* Results */
+  .results { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+  .rmeta { font-size: 13px; color: var(--muted); margin-top: 10px; min-height: 17px; }
+  .card {
+    display: flex; gap: 12px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 12px; text-decoration: none; color: var(--text); align-items: center;
+  }
+  .card:active { background: var(--surface-2); }
+  .card img { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; background: #fff; flex-shrink: 0; }
+  .card .noimg { width: 64px; height: 64px; border-radius: 8px; background: var(--surface-2); display: grid; place-items: center; color: var(--muted); font-size: 22px; flex-shrink: 0; }
+  .card .info { flex: 1; min-width: 0; }
+  .card .name { font-size: 14.5px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .priceline { display: flex; align-items: baseline; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+  .price { font-family: "Archivo", system-ui, sans-serif; font-weight: 800; font-size: 18px; color: var(--orange); }
+  .oldprice { font-size: 13px; color: var(--muted); text-decoration: line-through; }
+  .stock { font-size: 12px; margin-top: 3px; }
+  .stock.in { color: var(--ok); }
+  .stock.out { color: var(--muted); }
+
+  .notice {
+    margin-top: 12px; background: var(--surface); border: 1px solid var(--warn);
+    border-radius: 14px; padding: 14px; font-size: 14px; display: none;
+  }
+  .notice.show { display: block; }
+  .notice h4 { color: var(--warn); font-size: 14px; margin-bottom: 6px; }
+  .notice a { color: var(--orange); }
+  .fallback-open {
+    display: block; margin-top: 10px; background: var(--orange); color: #14100C;
+    border: 0; border-radius: 10px; padding: 12px; text-align: center; text-decoration: none;
+    font-weight: 700; font-size: 15px;
   }
 
-  /* Sections */
   h2 {
     font-family: "Archivo", system-ui, sans-serif; font-weight: 700; font-stretch: 85%;
     font-size: 13px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted);
     margin: 22px 0 10px;
   }
-
-  /* Presets */
-  .presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .preset {
-    background: var(--surface); border: 1px solid var(--line); color: var(--text);
-    border-radius: 12px; padding: 13px 12px; font-size: 14.5px; text-align: left;
-    cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  }
-  .preset:active { background: var(--surface-2); }
-  .preset .q-mark { color: var(--orange); font-weight: 700; margin-right: 5px; }
-
-  /* History */
   .history { display: flex; flex-direction: column; gap: 6px; }
   .hist-item {
     display: flex; justify-content: space-between; align-items: center;
@@ -184,45 +137,38 @@
   .hist-item .t { color: var(--muted); font-size: 12px; }
   .empty { color: var(--muted); font-size: 14px; }
 
-  /* Settings dialog */
   dialog {
     background: var(--surface); color: var(--text); border: 1px solid var(--line);
-    border-radius: 18px; padding: 18px; width: min(94vw, 480px);
-    max-height: 86vh; overflow-y: auto;
+    border-radius: 18px; padding: 18px; width: min(94vw, 480px); max-height: 86vh; overflow-y: auto;
   }
   dialog::backdrop { background: rgba(0,0,0,0.65); }
-  dialog h3 {
-    font-family: "Archivo", system-ui, sans-serif; font-weight: 800; font-stretch: 85%;
-    text-transform: uppercase; letter-spacing: 1px; font-size: 16px; margin-bottom: 14px;
-  }
+  dialog h3 { font-family: "Archivo", system-ui, sans-serif; font-weight: 800; font-stretch: 85%; text-transform: uppercase; letter-spacing: 1px; font-size: 16px; margin-bottom: 14px; }
   dialog label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 5px; }
-  dialog input[type="text"] {
+  dialog input[type="text"], dialog input[type="number"], dialog select {
     width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--text);
     border-radius: 10px; padding: 10px 12px; font-size: 14px;
   }
   .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; font-size: 14.5px; }
   .toggle-row input { width: 20px; height: 20px; accent-color: var(--orange); }
-  .preset-edit { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
-  .preset-edit input { flex: 1; min-width: 0; }
-  .preset-edit .del {
-    background: transparent; border: 1px solid var(--line); color: var(--muted);
-    border-radius: 8px; width: 34px; height: 34px; cursor: pointer; flex-shrink: 0;
+  .filter-edit {
+    border: 1px solid var(--line); border-radius: 12px; padding: 10px; margin-top: 10px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; font-size: 13px;
   }
+  .filter-edit .full { grid-column: 1 / -1; }
+  .filter-edit .cb { display: flex; align-items: center; gap: 6px; }
+  .filter-edit .cb input { width: 17px; height: 17px; accent-color: var(--orange); }
+  .filter-edit .del { background: transparent; border: 1px solid var(--line); color: var(--muted); border-radius: 8px; padding: 8px; cursor: pointer; grid-column: 1 / -1; }
   .dlg-actions { display: flex; gap: 8px; margin-top: 18px; }
-  .dlg-actions button {
-    flex: 1; border-radius: 12px; padding: 12px; font-size: 15px; cursor: pointer; border: 0;
-  }
+  .dlg-actions button { flex: 1; border-radius: 12px; padding: 12px; font-size: 15px; cursor: pointer; border: 0; }
   .dlg-save { background: var(--orange); color: #14100C; font-weight: 700; }
   .dlg-cancel { background: transparent; border: 1px solid var(--line) !important; color: var(--text); }
-  .addbtn {
-    margin-top: 10px; background: transparent; border: 1px dashed var(--line); color: var(--muted);
-    border-radius: 10px; padding: 10px; width: 100%; cursor: pointer; font-size: 14px;
-  }
+  .addbtn { margin-top: 10px; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 10px; padding: 10px; width: 100%; cursor: pointer; font-size: 14px; }
   .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
   .hint code { color: var(--orange); }
-  button:focus-visible, input:focus-visible, .preset:focus-visible, a:focus-visible {
-    outline: 2px solid var(--orange); outline-offset: 2px;
-  }
+  .spinner { width: 22px; height: 22px; border: 3px solid var(--line); border-top-color: var(--orange); border-radius: 50%; margin: 14px auto; animation: spin 0.8s linear infinite; display: none; }
+  .spinner.show { display: block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  button:focus-visible, input:focus-visible, .chip:focus-visible, a:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -254,20 +200,22 @@
   </div>
   <div class="status" id="status"></div>
 
-  <div class="result" id="result">
-    <div class="kind" id="resultKind">Strekkode</div>
-    <div class="ean" id="resultCode"></div>
-    <a class="openbtn" id="openLink" href="#" target="_blank" rel="noopener">Åpne i Power.no →</a>
-    <button class="copybtn" id="copyBtn">Kopier koden</button>
-  </div>
-
   <div class="search-row">
-    <input type="search" id="manualInput" placeholder="Søk manuelt: navn eller EAN…" enterkeyhint="search">
+    <input type="search" id="manualInput" placeholder="Søk: navn eller EAN…" enterkeyhint="search">
     <button id="manualBtn" aria-label="Søk">→</button>
   </div>
 
-  <h2>Presets</h2>
-  <div class="presets" id="presets"></div>
+  <div class="chips" id="chips"></div>
+
+  <div class="notice" id="corsNotice">
+    <h4>Direkte API-tilgang blokkert (CORS)</h4>
+    <div>Nettleseren fikk ikke hente data fra power.no direkte. Sett opp en proxy i ⚙ (se README i repoet), eller åpne søket på nettsiden:</div>
+    <a class="fallback-open" id="fallbackOpen" href="#" target="_blank" rel="noopener">Åpne søket på Power.no →</a>
+  </div>
+
+  <div class="spinner" id="spinner"></div>
+  <div class="rmeta" id="rmeta"></div>
+  <div class="results" id="results"></div>
 
   <h2>Historikk</h2>
   <div class="history" id="history"></div>
@@ -276,22 +224,25 @@
 <dialog id="settingsDlg">
   <h3>Innstillinger</h3>
 
-  <label for="tplInput">URL-mal for søk</label>
-  <input type="text" id="tplInput">
-  <div class="hint"><code>{q}</code> erstattes med skannet kode eller søketekst.</div>
+  <label for="apiInput">API URL-mal (JSON-søk)</label>
+  <input type="text" id="apiInput">
+  <div class="hint"><code>{q}</code> = søketekst/EAN. Sjekk faktisk endepunkt i DevTools → Network på power.no.</div>
 
-  <div class="toggle-row">
-    <span>Åpne Power.no automatisk etter skann</span>
-    <input type="checkbox" id="autoOpenChk">
-  </div>
+  <label for="proxyInput">CORS-proxy-mal (valgfritt)</label>
+  <input type="text" id="proxyInput" placeholder="https://min-proxy.workers.dev/?url={url}">
+  <div class="hint"><code>{url}</code> = kodet API-URL. Tomt = direkte kall.</div>
+
+  <label for="siteInput">Nettside-søk (fallback-lenke)</label>
+  <input type="text" id="siteInput">
+
   <div class="toggle-row">
     <span>Vibrasjon ved treff</span>
     <input type="checkbox" id="vibrateChk">
   </div>
 
-  <label>Presets (navn + URL, <code>{q}</code> valgfritt)</label>
-  <div id="presetEditor"></div>
-  <button class="addbtn" id="addPresetBtn">+ Legg til preset</button>
+  <label>Filter-presets</label>
+  <div id="filterEditor"></div>
+  <button class="addbtn" id="addFilterBtn">+ Legg til filter</button>
 
   <div class="dlg-actions">
     <button class="dlg-cancel" id="dlgCancel">Avbryt</button>
@@ -302,55 +253,188 @@
 <script>
 "use strict";
 
-/* ---------- State & storage ---------- */
+/* ---------- Defaults ---------- */
 const DEFAULTS = {
-  template: "https://www.power.no/search/?q={q}",
-  autoOpen: false,
+  apiTemplate: "https://www.power.no/api/v2/products?q={q}&size=24",
+  proxyTemplate: "",
+  siteTemplate: "https://www.power.no/search/?q={q}",
   vibrate: true
 };
-const DEFAULT_PRESETS = [
-  { name: "Ukens annonserte", url: "https://www.power.no/kampanje/ukens-annonserte/" },
-  { name: "Hvitevarer", url: "https://www.power.no/c/1574/hvitevarer/" },
-  { name: "Data & tilbehør", url: "https://www.power.no/c/1916/data-og-tilbehoer/" },
-  { name: "Søk (standard)", url: "https://www.power.no/search/?q={q}" }
+const DEFAULT_FILTERS = [
+  { name: "Alle", inStock: false, onSale: false, min: null, max: null, sort: "none" },
+  { name: "På lager", inStock: true, onSale: false, min: null, max: null, sort: "none" },
+  { name: "Tilbud", inStock: false, onSale: true, min: null, max: null, sort: "none" },
+  { name: "Pris ↑", inStock: false, onSale: false, min: null, max: null, sort: "asc" },
+  { name: "Pris ↓", inStock: false, onSale: false, min: null, max: null, sort: "desc" },
+  { name: "Under 500 kr", inStock: false, onSale: false, min: null, max: 500, sort: "asc" }
 ];
 
 const store = {
-  get(key, fallback) {
-    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-    catch { return fallback; }
-  },
-  set(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
+  get(k, f) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : f; } catch { return f; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
 };
 
 let settings = Object.assign({}, DEFAULTS, store.get("pwrskann.settings", {}));
-let presets = store.get("pwrskann.presets", DEFAULT_PRESETS);
+let filters = store.get("pwrskann.filters", DEFAULT_FILTERS);
 let history = store.get("pwrskann.history", []);
+let activeFilter = 0;
+let products = [];        // normalized products of last search
 let lastQuery = "";
 
-/* ---------- Elements ---------- */
 const $ = id => document.getElementById(id);
 const video = $("video");
 const scannerEl = $("scanner");
 const statusEl = $("status");
+function setStatus(m) { statusEl.textContent = m; }
+function buildUrl(tpl, q) { return tpl.includes("{q}") ? tpl.replaceAll("{q}", encodeURIComponent(q || "")) : tpl; }
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
 
-/* ---------- URL building ---------- */
-function buildUrl(template, q) {
-  return template.includes("{q}")
-    ? template.replaceAll("{q}", encodeURIComponent(q || ""))
-    : template;
+/* ---------- Product normalization (heuristics — API is undocumented) ---------- */
+function firstKey(obj, keys) {
+  for (const k of keys) {
+    if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
+  }
+  return null;
+}
+function normalizeProduct(p) {
+  if (typeof p !== "object" || p === null) return null;
+  const name = firstKey(p, ["title", "name", "productName", "displayName"]);
+  let price = firstKey(p, ["price", "salesPrice", "currentPrice", "priceInclVat"]);
+  if (typeof price === "object" && price) price = firstKey(price, ["current", "inclVat", "value", "amount"]);
+  let oldPrice = firstKey(p, ["previousPrice", "originalPrice", "oldPrice", "regularPrice", "beforePrice"]);
+  if (typeof oldPrice === "object" && oldPrice) oldPrice = firstKey(oldPrice, ["inclVat", "value", "amount"]);
+  let img = firstKey(p, ["productImage", "imageUrl", "image", "primaryImage"]);
+  if (!img && Array.isArray(p.images) && p.images.length) img = p.images[0];
+  if (typeof img === "object" && img) img = firstKey(img, ["url", "basePath", "src", "path"]);
+  let url = firstKey(p, ["url", "productUrl", "pdpUrl", "relativeUrl", "canonicalUrl"]);
+  let stock = firstKey(p, ["stockCount", "webStock", "stock", "inventory", "availableStock"]);
+  if (typeof stock === "object" && stock) stock = firstKey(stock, ["web", "count", "quantity"]);
+  const id = firstKey(p, ["id", "productId", "sku"]);
+  if (!name && price == null) return null;
+  return {
+    name: name || ("Produkt " + (id ?? "")),
+    price: typeof price === "string" ? parseFloat(price.replace(",", ".")) : price,
+    oldPrice: typeof oldPrice === "string" ? parseFloat(oldPrice.replace(",", ".")) : oldPrice,
+    img: img ? String(img) : null,
+    url: url ? new URL(String(url), "https://www.power.no").href : null,
+    stock: typeof stock === "number" ? stock : null,
+    raw: p
+  };
+}
+function extractProductArray(data) {
+  if (Array.isArray(data)) return data;
+  if (typeof data === "object" && data !== null) {
+    for (const key of ["products", "items", "results", "hits", "data"]) {
+      if (Array.isArray(data[key])) return data[key];
+    }
+    for (const v of Object.values(data)) {
+      if (Array.isArray(v) && v.length && typeof v[0] === "object") return v;
+    }
+  }
+  return [];
 }
 
-function handleQuery(q, kindLabel) {
+/* ---------- Search & render ---------- */
+async function runSearch(q) {
   lastQuery = q;
-  const url = buildUrl(settings.template, q);
-  $("resultKind").textContent = kindLabel;
-  $("resultCode").textContent = q;
-  $("openLink").href = url;
-  $("result").classList.add("show");
   addHistory(q);
-  if (settings.vibrate && navigator.vibrate) navigator.vibrate(80);
-  if (settings.autoOpen) location.href = url;
+  $("corsNotice").classList.remove("show");
+  $("results").innerHTML = "";
+  $("rmeta").textContent = "";
+  $("spinner").classList.add("show");
+
+  let apiUrl = buildUrl(settings.apiTemplate, q);
+  if (settings.proxyTemplate && settings.proxyTemplate.includes("{url}")) {
+    apiUrl = settings.proxyTemplate.replaceAll("{url}", encodeURIComponent(apiUrl));
+  }
+
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 12000);
+    const res = await fetch(apiUrl, { signal: ctrl.signal, headers: { "Accept": "application/json" } });
+    clearTimeout(timer);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    products = extractProductArray(data).map(normalizeProduct).filter(Boolean);
+    $("spinner").classList.remove("show");
+    renderResults();
+  } catch (err) {
+    $("spinner").classList.remove("show");
+    products = [];
+    // TypeError без статуса = почти наверняка CORS/сеть
+    $("fallbackOpen").href = buildUrl(settings.siteTemplate, q);
+    $("corsNotice").classList.add("show");
+    $("rmeta").textContent = "Feil: " + (err.name === "AbortError" ? "tidsavbrudd" : err.message);
+  }
+}
+
+function applyFilter(list, f) {
+  let out = list.slice();
+  if (f.inStock) out = out.filter(p => p.stock === null ? true : p.stock > 0);
+  if (f.onSale) out = out.filter(p => p.oldPrice != null && p.price != null && p.oldPrice > p.price);
+  if (f.min != null) out = out.filter(p => p.price != null && p.price >= f.min);
+  if (f.max != null) out = out.filter(p => p.price != null && p.price <= f.max);
+  if (f.sort === "asc") out.sort((a, b) => (a.price ?? 1e12) - (b.price ?? 1e12));
+  if (f.sort === "desc") out.sort((a, b) => (b.price ?? -1) - (a.price ?? -1));
+  return out;
+}
+
+function fmtPrice(n) {
+  if (n == null || isNaN(n)) return "";
+  return new Intl.NumberFormat("no-NO", { maximumFractionDigits: 0 }).format(n) + ",-";
+}
+
+function renderResults() {
+  const f = filters[activeFilter] || filters[0];
+  const list = applyFilter(products, f);
+  const el = $("results");
+  el.innerHTML = "";
+  if (!lastQuery) { $("rmeta").textContent = ""; return; }
+  $("rmeta").textContent = list.length
+    ? `${list.length} av ${products.length} treff · «${lastQuery}» · ${f.name}`
+    : (products.length ? `0 av ${products.length} treff med filter «${f.name}»` : `Ingen treff for «${lastQuery}»`);
+  if (!list.length && !products.length) {
+    const a = document.createElement("a");
+    a.className = "fallback-open";
+    a.target = "_blank"; a.rel = "noopener";
+    a.href = buildUrl(settings.siteTemplate, lastQuery);
+    a.textContent = "Prøv på Power.no →";
+    el.appendChild(a);
+    return;
+  }
+  list.forEach(p => {
+    const a = document.createElement("a");
+    a.className = "card";
+    a.href = p.url || buildUrl(settings.siteTemplate, p.name);
+    a.target = "_blank"; a.rel = "noopener";
+    const sale = p.oldPrice != null && p.price != null && p.oldPrice > p.price;
+    const stockHtml = p.stock === null ? "" :
+      (p.stock > 0 ? `<div class="stock in">✓ På lager (${p.stock})</div>` : `<div class="stock out">Ikke på nettlager</div>`);
+    a.innerHTML = `
+      ${p.img ? `<img src="${escapeHtml(p.img)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=noimg>📦</div>'">` : `<div class="noimg">📦</div>`}
+      <div class="info">
+        <div class="name">${escapeHtml(p.name)}</div>
+        <div class="priceline">
+          <span class="price">${fmtPrice(p.price)}</span>
+          ${sale ? `<span class="oldprice">${fmtPrice(p.oldPrice)}</span>` : ""}
+        </div>
+        ${stockHtml}
+      </div>`;
+    el.appendChild(a);
+  });
+}
+
+/* ---------- Filter chips ---------- */
+function renderChips() {
+  const el = $("chips");
+  el.innerHTML = "";
+  filters.forEach((f, i) => {
+    const b = document.createElement("button");
+    b.className = "chip" + (i === activeFilter ? " active" : "");
+    b.textContent = f.name;
+    b.addEventListener("click", () => { activeFilter = i; renderChips(); renderResults(); });
+    el.appendChild(b);
+  });
 }
 
 /* ---------- History ---------- */
@@ -363,70 +447,30 @@ function addHistory(q) {
 }
 function renderHistory() {
   const el = $("history");
-  if (!history.length) { el.innerHTML = '<div class="empty">Ingen skann ennå.</div>'; return; }
+  if (!history.length) { el.innerHTML = '<div class="empty">Ingen søk ennå.</div>'; return; }
   el.innerHTML = "";
   history.forEach(h => {
     const d = document.createElement("div");
-    d.className = "hist-item";
-    d.setAttribute("role", "button");
-    d.tabIndex = 0;
+    d.className = "hist-item"; d.setAttribute("role", "button"); d.tabIndex = 0;
     const time = new Date(h.t).toLocaleString("no-NO", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
-    d.innerHTML = `<span>${h.q}</span><span class="t">${time}</span>`;
-    d.addEventListener("click", () => window.open(buildUrl(settings.template, h.q), "_blank"));
+    d.innerHTML = `<span>${escapeHtml(h.q)}</span><span class="t">${time}</span>`;
+    d.addEventListener("click", () => runSearch(h.q));
     d.addEventListener("keydown", e => { if (e.key === "Enter") d.click(); });
     el.appendChild(d);
   });
 }
 
-/* ---------- Presets ---------- */
-function renderPresets() {
-  const el = $("presets");
-  el.innerHTML = "";
-  presets.forEach(p => {
-    const b = document.createElement("button");
-    b.className = "preset";
-    b.innerHTML = (p.url.includes("{q}") ? '<span class="q-mark">⌕</span>' : "") + escapeHtml(p.name);
-    b.title = p.url;
-    b.addEventListener("click", () => {
-      if (p.url.includes("{q}")) {
-        const q = lastQuery || $("manualInput").value.trim();
-        if (!q) { setStatus("Skann eller skriv noe først — presetten bruker {q}."); return; }
-        window.open(buildUrl(p.url, q), "_blank");
-      } else {
-        window.open(p.url, "_blank");
-      }
-    });
-    el.appendChild(b);
-  });
-}
-function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
-
 /* ---------- Manual search ---------- */
 $("manualBtn").addEventListener("click", doManual);
-$("manualInput").addEventListener("keydown", e => { if (e.key === "Enter") doManual(); });
+$("manualInput").addEventListener("keydown", e => { if (e.key === "Enter") { doManual(); e.target.blur(); } });
 function doManual() {
   const q = $("manualInput").value.trim();
-  if (!q) return;
-  lastQuery = q;
-  addHistory(q);
-  window.open(buildUrl(settings.template, q), "_blank");
+  if (q) runSearch(q);
 }
 
-/* ---------- Copy ---------- */
-$("copyBtn").addEventListener("click", async () => {
-  try { await navigator.clipboard.writeText($("resultCode").textContent); setStatus("Kopiert ✓"); }
-  catch { setStatus("Kunne ikke kopiere."); }
-});
-
 /* ---------- Scanner ---------- */
-let stream = null;
-let scanning = false;
+let stream = null, scanning = false, zxingReader = null;
 let lastHit = { code: "", t: 0 };
-let zxingReader = null;
-
-function setStatus(msg) { statusEl.textContent = msg; }
 
 $("startBtn").addEventListener("click", startScanner);
 $("stopBtn").addEventListener("click", stopScanner);
@@ -434,13 +478,9 @@ $("stopBtn").addEventListener("click", stopScanner);
 async function startScanner() {
   try {
     stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
-      audio: false
+      video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false
     });
-  } catch (err) {
-    setStatus("Fikk ikke tilgang til kamera: " + err.name);
-    return;
-  }
+  } catch (err) { setStatus("Fikk ikke tilgang til kamera: " + err.name); return; }
   video.srcObject = stream;
   await video.play();
   $("idleScreen").style.display = "none";
@@ -449,14 +489,8 @@ async function startScanner() {
   scanning = true;
   setStatus("Sikt på strekkoden…");
   setupTorch();
-
-  if ("BarcodeDetector" in window) {
-    nativeLoop();
-  } else {
-    await zxingLoop();
-  }
+  if ("BarcodeDetector" in window) nativeLoop(); else await zxingLoop();
 }
-
 function stopScanner() {
   scanning = false;
   if (zxingReader) { try { zxingReader.reset(); } catch {} }
@@ -468,58 +502,49 @@ function stopScanner() {
   $("torchBtn").hidden = true;
   setStatus("");
 }
-
-function onCode(raw, format) {
+function onCode(raw) {
   const code = String(raw).trim();
   if (!code) return;
   const now = Date.now();
-  if (code === lastHit.code && now - lastHit.t < 3000) return; // debounce duplicates
+  if (code === lastHit.code && now - lastHit.t < 3000) return;
   lastHit = { code, t: now };
   scannerEl.classList.add("hit");
   setTimeout(() => scannerEl.classList.remove("hit"), 600);
-  handleQuery(code, (format || "strekkode").toUpperCase().replaceAll("_", "-"));
-  setStatus("Treff ✓ — skanner videre…");
+  if (settings.vibrate && navigator.vibrate) navigator.vibrate(80);
+  $("manualInput").value = code;
+  setStatus("Treff ✓ — søker…");
+  runSearch(code);
 }
-
 async function nativeLoop() {
   const formats = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "itf", "qr_code"];
   let detector;
   try {
     const supported = await BarcodeDetector.getSupportedFormats();
     detector = new BarcodeDetector({ formats: formats.filter(f => supported.includes(f)) });
-  } catch {
-    detector = new BarcodeDetector();
-  }
+  } catch { detector = new BarcodeDetector(); }
   const tick = async () => {
     if (!scanning) return;
     if (video.readyState >= 2) {
       try {
         const codes = await detector.detect(video);
-        if (codes.length) onCode(codes[0].rawValue, codes[0].format);
+        if (codes.length) onCode(codes[0].rawValue);
       } catch {}
     }
     setTimeout(() => requestAnimationFrame(tick), 120);
   };
   requestAnimationFrame(tick);
 }
-
 async function zxingLoop() {
   setStatus("Laster skannermotor…");
-  try {
-    await loadScript("https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js");
-  } catch {
-    setStatus("Kunne ikke laste ZXing (ingen nett?).");
-    return;
-  }
+  try { await loadScript("https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"); }
+  catch { setStatus("Kunne ikke laste ZXing (ingen nett?)."); return; }
   const { BrowserMultiFormatReader } = window.ZXing;
   zxingReader = new BrowserMultiFormatReader();
   setStatus("Sikt på strekkoden…");
-  zxingReader.decodeFromStream(stream, video, (res) => {
-    if (!scanning) return;
-    if (res) onCode(res.getText(), res.getBarcodeFormat ? String(res.getBarcodeFormat()) : "");
+  zxingReader.decodeFromStream(stream, video, res => {
+    if (scanning && res) onCode(res.getText());
   });
 }
-
 function loadScript(src) {
   return new Promise((res, rej) => {
     const s = document.createElement("script");
@@ -527,8 +552,6 @@ function loadScript(src) {
     document.head.appendChild(s);
   });
 }
-
-/* ---------- Torch ---------- */
 function setupTorch() {
   const track = stream && stream.getVideoTracks()[0];
   if (!track) return;
@@ -544,64 +567,77 @@ function setupTorch() {
   };
 }
 
-/* ---------- Settings dialog ---------- */
+/* ---------- Settings ---------- */
 const dlg = $("settingsDlg");
 $("settingsBtn").addEventListener("click", () => {
-  $("tplInput").value = settings.template;
-  $("autoOpenChk").checked = settings.autoOpen;
+  $("apiInput").value = settings.apiTemplate;
+  $("proxyInput").value = settings.proxyTemplate;
+  $("siteInput").value = settings.siteTemplate;
   $("vibrateChk").checked = settings.vibrate;
-  renderPresetEditor();
+  renderFilterEditor();
   dlg.showModal();
 });
 $("dlgCancel").addEventListener("click", () => dlg.close());
 $("dlgSave").addEventListener("click", () => {
-  settings.template = $("tplInput").value.trim() || DEFAULTS.template;
-  settings.autoOpen = $("autoOpenChk").checked;
+  settings.apiTemplate = $("apiInput").value.trim() || DEFAULTS.apiTemplate;
+  settings.proxyTemplate = $("proxyInput").value.trim();
+  settings.siteTemplate = $("siteInput").value.trim() || DEFAULTS.siteTemplate;
   settings.vibrate = $("vibrateChk").checked;
   store.set("pwrskann.settings", settings);
-  presets = collectPresetEditor();
-  store.set("pwrskann.presets", presets);
-  renderPresets();
+  filters = collectFilterEditor();
+  store.set("pwrskann.filters", filters);
+  if (activeFilter >= filters.length) activeFilter = 0;
+  renderChips();
+  renderResults();
   dlg.close();
 });
-$("addPresetBtn").addEventListener("click", () => addPresetRow("", ""));
+$("addFilterBtn").addEventListener("click", () => addFilterRow({ name: "", inStock: false, onSale: false, min: null, max: null, sort: "none" }));
 
-function renderPresetEditor() {
-  $("presetEditor").innerHTML = "";
-  presets.forEach(p => addPresetRow(p.name, p.url));
+function renderFilterEditor() {
+  $("filterEditor").innerHTML = "";
+  filters.forEach(f => addFilterRow(f));
 }
-function addPresetRow(name, url) {
+function addFilterRow(f) {
   const row = document.createElement("div");
-  row.className = "preset-edit";
+  row.className = "filter-edit";
   row.innerHTML = `
-    <input type="text" class="p-name" placeholder="Navn" value="${escapeAttr(name)}">
-    <input type="text" class="p-url" placeholder="https://… (kan ha {q})" value="${escapeAttr(url)}">
-    <button class="del" aria-label="Slett">🗑</button>`;
+    <input type="text" class="f-name full" placeholder="Navn" value="${escapeHtml(f.name)}">
+    <label class="cb"><input type="checkbox" class="f-stock" ${f.inStock ? "checked" : ""}> På lager</label>
+    <label class="cb"><input type="checkbox" class="f-sale" ${f.onSale ? "checked" : ""}> Kun tilbud</label>
+    <input type="number" class="f-min" placeholder="Min kr" value="${f.min ?? ""}">
+    <input type="number" class="f-max" placeholder="Maks kr" value="${f.max ?? ""}">
+    <select class="f-sort full">
+      <option value="none" ${f.sort === "none" ? "selected" : ""}>Uten sortering</option>
+      <option value="asc" ${f.sort === "asc" ? "selected" : ""}>Pris: lav → høy</option>
+      <option value="desc" ${f.sort === "desc" ? "selected" : ""}>Pris: høy → lav</option>
+    </select>
+    <button class="del">🗑 Slett</button>`;
   row.querySelector(".del").addEventListener("click", () => row.remove());
-  $("presetEditor").appendChild(row);
+  $("filterEditor").appendChild(row);
 }
-function escapeAttr(s) { return String(s).replace(/"/g, "&quot;"); }
-function collectPresetEditor() {
+function collectFilterEditor() {
   const out = [];
-  document.querySelectorAll("#presetEditor .preset-edit").forEach(row => {
-    const name = row.querySelector(".p-name").value.trim();
-    const url = row.querySelector(".p-url").value.trim();
-    if (name && url) out.push({ name, url });
+  document.querySelectorAll("#filterEditor .filter-edit").forEach(row => {
+    const name = row.querySelector(".f-name").value.trim();
+    if (!name) return;
+    const min = row.querySelector(".f-min").value;
+    const max = row.querySelector(".f-max").value;
+    out.push({
+      name,
+      inStock: row.querySelector(".f-stock").checked,
+      onSale: row.querySelector(".f-sale").checked,
+      min: min === "" ? null : parseFloat(min),
+      max: max === "" ? null : parseFloat(max),
+      sort: row.querySelector(".f-sort").value
+    });
   });
-  return out.length ? out : DEFAULT_PRESETS;
+  return out.length ? out : DEFAULT_FILTERS;
 }
 
-/* ---------- PWA ---------- */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js").catch(() => {});
-}
-
-/* ---------- Init ---------- */
-renderPresets();
+/* ---------- PWA & init ---------- */
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+renderChips();
 renderHistory();
-if (!("BarcodeDetector" in window)) {
-  setStatus("Ingen innebygd skanner — bruker ZXing-fallback.");
-}
 </script>
 </body>
 </html>
