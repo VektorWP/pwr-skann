@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0D0D0F">
+<title>PWR Skann</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0D0F;
+    --surface: #17181C;
+    --surface-2: #1F2126;
+    --line: #2A2D33;
+    --orange: #FF6A00;
+    --orange-press: #E55E00;
+    --text: #F5F5F2;
+    --muted: #8A8D93;
+    --ok: #3DDC84;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 0 14px 32px; }
+
+  /* Header */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 2px 10px;
+  }
+  .wordmark {
+    font-family: "Archivo", system-ui, sans-serif;
+    font-weight: 900;
+    font-stretch: 78%;
+    font-size: 26px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .wordmark .pwr { color: var(--orange); }
+  .wordmark .sub {
+    display: block;
+    font-weight: 600;
+    font-stretch: 90%;
+    font-size: 10px;
+    letter-spacing: 3.5px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .iconbtn {
+    background: var(--surface); border: 1px solid var(--line); color: var(--text);
+    width: 42px; height: 42px; border-radius: 12px; font-size: 19px;
+    display: grid; place-items: center; cursor: pointer;
+  }
+  .iconbtn:active { background: var(--surface-2); }
+
+  /* Viewfinder */
+  .scanner {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #000;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--line);
+  }
+  .scanner video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .scanner .overlay { position: absolute; inset: 0; pointer-events: none; }
+  .frame {
+    position: absolute; left: 12%; right: 12%; top: 26%; bottom: 26%;
+  }
+  .corner { position: absolute; width: 26px; height: 26px; border: 3px solid var(--orange); }
+  .corner.tl { top: 0; left: 0; border-right: 0; border-bottom: 0; border-top-left-radius: 8px; }
+  .corner.tr { top: 0; right: 0; border-left: 0; border-bottom: 0; border-top-right-radius: 8px; }
+  .corner.bl { bottom: 0; left: 0; border-right: 0; border-top: 0; border-bottom-left-radius: 8px; }
+  .corner.br { bottom: 0; right: 0; border-left: 0; border-top: 0; border-bottom-right-radius: 8px; }
+  .laser {
+    position: absolute; left: 6%; right: 6%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--orange) 20%, var(--orange) 80%, transparent);
+    box-shadow: 0 0 10px 1px rgba(255,106,0,0.7);
+    top: 10%;
+    animation: sweep 2.1s ease-in-out infinite alternate;
+  }
+  @keyframes sweep { from { top: 8%; } to { top: 90%; } }
+  @media (prefers-reduced-motion: reduce) { .laser { animation: none; top: 50%; } }
+  .scanner.hit .corner { border-color: var(--ok); }
+  .scanner.hit .laser { display: none; }
+
+  .scanner .idle {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    background: radial-gradient(ellipse at center, #17181C 0%, #0D0D0F 100%);
+  }
+  .bigstart {
+    background: var(--orange); color: #14100C; border: 0;
+    font-family: "Archivo", system-ui, sans-serif; font-weight: 800; font-stretch: 85%;
+    font-size: 17px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 16px 26px; border-radius: 14px; cursor: pointer;
+  }
+  .bigstart:active { background: var(--orange-press); }
+
+  .cam-controls {
+    position: absolute; right: 10px; bottom: 10px; display: flex; gap: 8px;
+  }
+  .cam-controls button {
+    background: rgba(13,13,15,0.65); backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.15); color: var(--text);
+    width: 42px; height: 42px; border-radius: 50%; font-size: 18px; cursor: pointer;
+  }
+  .status {
+    font-size: 13px; color: var(--muted); text-align: center; margin-top: 8px; min-height: 18px;
+  }
+
+  /* Result card */
+  .result {
+    margin-top: 12px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; padding: 14px; display: none;
+  }
+  .result.show { display: block; }
+  .result .ean {
+    font-family: "Archivo", monospace; font-weight: 700; font-size: 24px;
+    letter-spacing: 2.5px; word-break: break-all;
+  }
+  .result .kind { font-size: 12px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 2px; }
+  .openbtn {
+    display: block; width: 100%; margin-top: 12px;
+    background: var(--orange); color: #14100C; border: 0; border-radius: 12px;
+    font-family: "Archivo", system-ui, sans-serif; font-weight: 800; font-size: 16px;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 14px; cursor: pointer; text-align: center; text-decoration: none;
+  }
+  .openbtn:active { background: var(--orange-press); }
+  .copybtn {
+    margin-top: 8px; width: 100%; background: transparent; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 12px; padding: 10px; font-size: 14px; cursor: pointer;
+  }
+
+  /* Manual search */
+  .search-row { display: flex; gap: 8px; margin-top: 18px; }
+  .search-row input {
+    flex: 1; background: var(--surface); border: 1px solid var(--line); color: var(--text);
+    border-radius: 12px; padding: 13px 14px; font-size: 16px; min-width: 0;
+  }
+  .search-row input:focus { outline: 2px solid var(--orange); border-color: transparent; }
+  .search-row button {
+    background: var(--orange); border: 0; color: #14100C; border-radius: 12px;
+    padding: 0 18px; font-size: 18px; cursor: pointer;
+  }
+
+  /* Sections */
+  h2 {
+    font-family: "Archivo", system-ui, sans-serif; font-weight: 700; font-stretch: 85%;
+    font-size: 13px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted);
+    margin: 22px 0 10px;
+  }
+
+  /* Presets */
+  .presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .preset {
+    background: var(--surface); border: 1px solid var(--line); color: var(--text);
+    border-radius: 12px; padding: 13px 12px; font-size: 14.5px; text-align: left;
+    cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .preset:active { background: var(--surface-2); }
+  .preset .q-mark { color: var(--orange); font-weight: 700; margin-right: 5px; }
+
+  /* History */
+  .history { display: flex; flex-direction: column; gap: 6px; }
+  .hist-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 9px 12px; font-size: 14px; cursor: pointer;
+  }
+  .hist-item .t { color: var(--muted); font-size: 12px; }
+  .empty { color: var(--muted); font-size: 14px; }
+
+  /* Settings dialog */
+  dialog {
+    background: var(--surface); color: var(--text); border: 1px solid var(--line);
+    border-radius: 18px; padding: 18px; width: min(94vw, 480px);
+    max-height: 86vh; overflow-y: auto;
+  }
+  dialog::backdrop { background: rgba(0,0,0,0.65); }
+  dialog h3 {
+    font-family: "Archivo", system-ui, sans-serif; font-weight: 800; font-stretch: 85%;
+    text-transform: uppercase; letter-spacing: 1px; font-size: 16px; margin-bottom: 14px;
+  }
+  dialog label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 5px; }
+  dialog input[type="text"] {
+    width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--text);
+    border-radius: 10px; padding: 10px 12px; font-size: 14px;
+  }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; font-size: 14.5px; }
+  .toggle-row input { width: 20px; height: 20px; accent-color: var(--orange); }
+  .preset-edit { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+  .preset-edit input { flex: 1; min-width: 0; }
+  .preset-edit .del {
+    background: transparent; border: 1px solid var(--line); color: var(--muted);
+    border-radius: 8px; width: 34px; height: 34px; cursor: pointer; flex-shrink: 0;
+  }
+  .dlg-actions { display: flex; gap: 8px; margin-top: 18px; }
+  .dlg-actions button {
+    flex: 1; border-radius: 12px; padding: 12px; font-size: 15px; cursor: pointer; border: 0;
+  }
+  .dlg-save { background: var(--orange); color: #14100C; font-weight: 700; }
+  .dlg-cancel { background: transparent; border: 1px solid var(--line) !important; color: var(--text); }
+  .addbtn {
+    margin-top: 10px; background: transparent; border: 1px dashed var(--line); color: var(--muted);
+    border-radius: 10px; padding: 10px; width: 100%; cursor: pointer; font-size: 14px;
+  }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .hint code { color: var(--orange); }
+  button:focus-visible, input:focus-visible, .preset:focus-visible, a:focus-visible {
+    outline: 2px solid var(--orange); outline-offset: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="wordmark">
+      <span class="pwr">PWR</span> Skann
+      <span class="sub">POWER.NO HURTIGSØK</span>
+    </div>
+    <button class="iconbtn" id="settingsBtn" aria-label="Innstillinger">⚙</button>
+  </header>
+
+  <div class="scanner" id="scanner">
+    <video id="video" playsinline muted></video>
+    <div class="overlay">
+      <div class="frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="laser" id="laser" hidden></div>
+      </div>
+    </div>
+    <div class="idle" id="idleScreen">
+      <button class="bigstart" id="startBtn">▶ Start skanner</button>
+    </div>
+    <div class="cam-controls" id="camControls" hidden>
+      <button id="torchBtn" aria-label="Lommelykt" hidden>🔦</button>
+      <button id="stopBtn" aria-label="Stopp">✕</button>
+    </div>
+  </div>
+  <div class="status" id="status"></div>
+
+  <div class="result" id="result">
+    <div class="kind" id="resultKind">Strekkode</div>
+    <div class="ean" id="resultCode"></div>
+    <a class="openbtn" id="openLink" href="#" target="_blank" rel="noopener">Åpne i Power.no →</a>
+    <button class="copybtn" id="copyBtn">Kopier koden</button>
+  </div>
+
+  <div class="search-row">
+    <input type="search" id="manualInput" placeholder="Søk manuelt: navn eller EAN…" enterkeyhint="search">
+    <button id="manualBtn" aria-label="Søk">→</button>
+  </div>
+
+  <h2>Presets</h2>
+  <div class="presets" id="presets"></div>
+
+  <h2>Historikk</h2>
+  <div class="history" id="history"></div>
+</div>
+
+<dialog id="settingsDlg">
+  <h3>Innstillinger</h3>
+
+  <label for="tplInput">URL-mal for søk</label>
+  <input type="text" id="tplInput">
+  <div class="hint"><code>{q}</code> erstattes med skannet kode eller søketekst.</div>
+
+  <div class="toggle-row">
+    <span>Åpne Power.no automatisk etter skann</span>
+    <input type="checkbox" id="autoOpenChk">
+  </div>
+  <div class="toggle-row">
+    <span>Vibrasjon ved treff</span>
+    <input type="checkbox" id="vibrateChk">
+  </div>
+
+  <label>Presets (navn + URL, <code>{q}</code> valgfritt)</label>
+  <div id="presetEditor"></div>
+  <button class="addbtn" id="addPresetBtn">+ Legg til preset</button>
+
+  <div class="dlg-actions">
+    <button class="dlg-cancel" id="dlgCancel">Avbryt</button>
+    <button class="dlg-save" id="dlgSave">Lagre</button>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+
+/* ---------- State & storage ---------- */
+const DEFAULTS = {
+  template: "https://www.power.no/search/?q={q}",
+  autoOpen: false,
+  vibrate: true
+};
+const DEFAULT_PRESETS = [
+  { name: "Ukens annonserte", url: "https://www.power.no/kampanje/ukens-annonserte/" },
+  { name: "Hvitevarer", url: "https://www.power.no/c/1574/hvitevarer/" },
+  { name: "Data & tilbehør", url: "https://www.power.no/c/1916/data-og-tilbehoer/" },
+  { name: "Søk (standard)", url: "https://www.power.no/search/?q={q}" }
+];
+
+const store = {
+  get(key, fallback) {
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
+    catch { return fallback; }
+  },
+  set(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
+};
+
+let settings = Object.assign({}, DEFAULTS, store.get("pwrskann.settings", {}));
+let presets = store.get("pwrskann.presets", DEFAULT_PRESETS);
+let history = store.get("pwrskann.history", []);
+let lastQuery = "";
+
+/* ---------- Elements ---------- */
+const $ = id => document.getElementById(id);
+const video = $("video");
+const scannerEl = $("scanner");
+const statusEl = $("status");
+
+/* ---------- URL building ---------- */
+function buildUrl(template, q) {
+  return template.includes("{q}")
+    ? template.replaceAll("{q}", encodeURIComponent(q || ""))
+    : template;
+}
+
+function handleQuery(q, kindLabel) {
+  lastQuery = q;
+  const url = buildUrl(settings.template, q);
+  $("resultKind").textContent = kindLabel;
+  $("resultCode").textContent = q;
+  $("openLink").href = url;
+  $("result").classList.add("show");
+  addHistory(q);
+  if (settings.vibrate && navigator.vibrate) navigator.vibrate(80);
+  if (settings.autoOpen) location.href = url;
+}
+
+/* ---------- History ---------- */
+function addHistory(q) {
+  history = history.filter(h => h.q !== q);
+  history.unshift({ q, t: Date.now() });
+  history = history.slice(0, 12);
+  store.set("pwrskann.history", history);
+  renderHistory();
+}
+function renderHistory() {
+  const el = $("history");
+  if (!history.length) { el.innerHTML = '<div class="empty">Ingen skann ennå.</div>'; return; }
+  el.innerHTML = "";
+  history.forEach(h => {
+    const d = document.createElement("div");
+    d.className = "hist-item";
+    d.setAttribute("role", "button");
+    d.tabIndex = 0;
+    const time = new Date(h.t).toLocaleString("no-NO", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+    d.innerHTML = `<span>${h.q}</span><span class="t">${time}</span>`;
+    d.addEventListener("click", () => window.open(buildUrl(settings.template, h.q), "_blank"));
+    d.addEventListener("keydown", e => { if (e.key === "Enter") d.click(); });
+    el.appendChild(d);
+  });
+}
+
+/* ---------- Presets ---------- */
+function renderPresets() {
+  const el = $("presets");
+  el.innerHTML = "";
+  presets.forEach(p => {
+    const b = document.createElement("button");
+    b.className = "preset";
+    b.innerHTML = (p.url.includes("{q}") ? '<span class="q-mark">⌕</span>' : "") + escapeHtml(p.name);
+    b.title = p.url;
+    b.addEventListener("click", () => {
+      if (p.url.includes("{q}")) {
+        const q = lastQuery || $("manualInput").value.trim();
+        if (!q) { setStatus("Skann eller skriv noe først — presetten bruker {q}."); return; }
+        window.open(buildUrl(p.url, q), "_blank");
+      } else {
+        window.open(p.url, "_blank");
+      }
+    });
+    el.appendChild(b);
+  });
+}
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+/* ---------- Manual search ---------- */
+$("manualBtn").addEventListener("click", doManual);
+$("manualInput").addEventListener("keydown", e => { if (e.key === "Enter") doManual(); });
+function doManual() {
+  const q = $("manualInput").value.trim();
+  if (!q) return;
+  lastQuery = q;
+  addHistory(q);
+  window.open(buildUrl(settings.template, q), "_blank");
+}
+
+/* ---------- Copy ---------- */
+$("copyBtn").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText($("resultCode").textContent); setStatus("Kopiert ✓"); }
+  catch { setStatus("Kunne ikke kopiere."); }
+});
+
+/* ---------- Scanner ---------- */
+let stream = null;
+let scanning = false;
+let lastHit = { code: "", t: 0 };
+let zxingReader = null;
+
+function setStatus(msg) { statusEl.textContent = msg; }
+
+$("startBtn").addEventListener("click", startScanner);
+$("stopBtn").addEventListener("click", stopScanner);
+
+async function startScanner() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false
+    });
+  } catch (err) {
+    setStatus("Fikk ikke tilgang til kamera: " + err.name);
+    return;
+  }
+  video.srcObject = stream;
+  await video.play();
+  $("idleScreen").style.display = "none";
+  $("camControls").hidden = false;
+  $("laser").hidden = false;
+  scanning = true;
+  setStatus("Sikt på strekkoden…");
+  setupTorch();
+
+  if ("BarcodeDetector" in window) {
+    nativeLoop();
+  } else {
+    await zxingLoop();
+  }
+}
+
+function stopScanner() {
+  scanning = false;
+  if (zxingReader) { try { zxingReader.reset(); } catch {} }
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  video.srcObject = null;
+  $("idleScreen").style.display = "grid";
+  $("camControls").hidden = true;
+  $("laser").hidden = true;
+  $("torchBtn").hidden = true;
+  setStatus("");
+}
+
+function onCode(raw, format) {
+  const code = String(raw).trim();
+  if (!code) return;
+  const now = Date.now();
+  if (code === lastHit.code && now - lastHit.t < 3000) return; // debounce duplicates
+  lastHit = { code, t: now };
+  scannerEl.classList.add("hit");
+  setTimeout(() => scannerEl.classList.remove("hit"), 600);
+  handleQuery(code, (format || "strekkode").toUpperCase().replaceAll("_", "-"));
+  setStatus("Treff ✓ — skanner videre…");
+}
+
+async function nativeLoop() {
+  const formats = ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "itf", "qr_code"];
+  let detector;
+  try {
+    const supported = await BarcodeDetector.getSupportedFormats();
+    detector = new BarcodeDetector({ formats: formats.filter(f => supported.includes(f)) });
+  } catch {
+    detector = new BarcodeDetector();
+  }
+  const tick = async () => {
+    if (!scanning) return;
+    if (video.readyState >= 2) {
+      try {
+        const codes = await detector.detect(video);
+        if (codes.length) onCode(codes[0].rawValue, codes[0].format);
+      } catch {}
+    }
+    setTimeout(() => requestAnimationFrame(tick), 120);
+  };
+  requestAnimationFrame(tick);
+}
+
+async function zxingLoop() {
+  setStatus("Laster skannermotor…");
+  try {
+    await loadScript("https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js");
+  } catch {
+    setStatus("Kunne ikke laste ZXing (ingen nett?).");
+    return;
+  }
+  const { BrowserMultiFormatReader } = window.ZXing;
+  zxingReader = new BrowserMultiFormatReader();
+  setStatus("Sikt på strekkoden…");
+  zxingReader.decodeFromStream(stream, video, (res) => {
+    if (!scanning) return;
+    if (res) onCode(res.getText(), res.getBarcodeFormat ? String(res.getBarcodeFormat()) : "");
+  });
+}
+
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = src; s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+/* ---------- Torch ---------- */
+function setupTorch() {
+  const track = stream && stream.getVideoTracks()[0];
+  if (!track) return;
+  const caps = track.getCapabilities ? track.getCapabilities() : {};
+  if (!caps.torch) return;
+  const btn = $("torchBtn");
+  btn.hidden = false;
+  let on = false;
+  btn.onclick = async () => {
+    on = !on;
+    try { await track.applyConstraints({ advanced: [{ torch: on }] }); }
+    catch { setStatus("Lommelykt utilgjengelig."); }
+  };
+}
+
+/* ---------- Settings dialog ---------- */
+const dlg = $("settingsDlg");
+$("settingsBtn").addEventListener("click", () => {
+  $("tplInput").value = settings.template;
+  $("autoOpenChk").checked = settings.autoOpen;
+  $("vibrateChk").checked = settings.vibrate;
+  renderPresetEditor();
+  dlg.showModal();
+});
+$("dlgCancel").addEventListener("click", () => dlg.close());
+$("dlgSave").addEventListener("click", () => {
+  settings.template = $("tplInput").value.trim() || DEFAULTS.template;
+  settings.autoOpen = $("autoOpenChk").checked;
+  settings.vibrate = $("vibrateChk").checked;
+  store.set("pwrskann.settings", settings);
+  presets = collectPresetEditor();
+  store.set("pwrskann.presets", presets);
+  renderPresets();
+  dlg.close();
+});
+$("addPresetBtn").addEventListener("click", () => addPresetRow("", ""));
+
+function renderPresetEditor() {
+  $("presetEditor").innerHTML = "";
+  presets.forEach(p => addPresetRow(p.name, p.url));
+}
+function addPresetRow(name, url) {
+  const row = document.createElement("div");
+  row.className = "preset-edit";
+  row.innerHTML = `
+    <input type="text" class="p-name" placeholder="Navn" value="${escapeAttr(name)}">
+    <input type="text" class="p-url" placeholder="https://… (kan ha {q})" value="${escapeAttr(url)}">
+    <button class="del" aria-label="Slett">🗑</button>`;
+  row.querySelector(".del").addEventListener("click", () => row.remove());
+  $("presetEditor").appendChild(row);
+}
+function escapeAttr(s) { return String(s).replace(/"/g, "&quot;"); }
+function collectPresetEditor() {
+  const out = [];
+  document.querySelectorAll("#presetEditor .preset-edit").forEach(row => {
+    const name = row.querySelector(".p-name").value.trim();
+    const url = row.querySelector(".p-url").value.trim();
+    if (name && url) out.push({ name, url });
+  });
+  return out.length ? out : DEFAULT_PRESETS;
+}
+
+/* ---------- PWA ---------- */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+
+/* ---------- Init ---------- */
+renderPresets();
+renderHistory();
+if (!("BarcodeDetector" in window)) {
+  setStatus("Ingen innebygd skanner — bruker ZXing-fallback.");
+}
+</script>
+</body>
+</html>
